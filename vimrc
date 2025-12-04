@@ -1,3 +1,7 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM user interface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " Show matching brackets when text indicator is over them
 set showmatch
 
@@ -22,10 +26,10 @@ set hlsearch
 " Makes search act like search in modern browsers
 set incsearch
 
-" Don't redraw while executing macros
+" Don't redraw while executing macros (good performance config)
 set lazyredraw
 
-" No sound on errors
+" No annoying sound on errors
 set noerrorbells
 set novisualbell
 set t_vb=
@@ -44,20 +48,67 @@ set number
 syntax on
 
 " Set screen background
-" set background=----
+" set background=dark
 
 " Set colors
 colorscheme desert
 
-"""""""""""""""""""""""""""""""
-" => Text, tab and indentation
-"""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text, tab and indent related
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
 set expandtab
 
 " 1 tab == 4 spaces
 set shiftwidth=4
 set tabstop=4
+
+
+""""""""""""""""""""""""""""""
+" => TABS
+""""""""""""""""""""""""""""""
+" always show tabline (0=never,1=if tab >1 ,2=always)
+set showtabline=2
+
+" custom tabline
+set tabline=%!MyTabLine()
+
+function! MyTabLine()
+  let s = ''
+  " loop over tabs
+  for i in range(1, tabpagenr('$'))
+    " Highlight tabs: current vs others
+    if i == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
+
+    " Clic on tabs (if mouse enabled)
+    let s .= '%' . i . 'T'
+
+    let buflist = tabpagebuflist(i)
+    let winnr  = tabpagewinnr(i)
+    let buf    = buflist[winnr - 1]
+
+    " File name (name only,no path)
+    let fname = bufname(buf)
+    if fname == ''
+      let fname = '[No Name]'
+    else
+      let fname = fnamemodify(fname, ':t')
+    endif
+
+    " notify if file has been modified
+    let modified = getbufvar(buf, '&modified') ? '❗️' : ' ✅'
+
+    let s .= ' ' . i . ': ' . fname . modified . ' '
+  endfor
+
+  let s .= '%#TabLineFill#%T'
+
+  return s
+endfunction
 
 
 """"""""""""""""""""""""""""""
@@ -79,9 +130,9 @@ set statusline +=\ \ Column:\%c
 
 
 """"""""""""""""""""""""""""""
-" => YAML,Shell,ZShell,Json
+" => YAML,Shell,ZShell
 """"""""""""""""""""""""""""""
-autocmd FileType json,yaml,sh,zsh setlocal ts=2 sts=2 sw=2 expandtab
+autocmd FileType yaml,sh,zsh,json setlocal ts=2 sts=2 sw=2 expandtab
 
 
 if 1
