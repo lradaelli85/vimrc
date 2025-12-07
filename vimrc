@@ -124,10 +124,31 @@ set statusline=
 set statusline +=\ [%{&ff}]
 set statusline +=\ %y
 set statusline +=\ [%{''.(&fenc!=''?&fenc:&enc).''}]
-set statusline +=\ %<%F%m
+set statusline +=\ %<%F "%m
 set statusline +=\ \ Line:\%l\/%L
 set statusline +=\ \ Column:\%c
 
+
+""""""""""""""""""""""""""""""
+" => Mappings
+""""""""""""""""""""""""""""""
+
+" Open a terminal below current tan
+nmap <S-t> :below terminal<CR>
+
+" Move on left tab
+nmap <S-Left> gT
+
+" Move on right tab
+nmap <S-Right> gt
+
+" Open a new file with no name in a new tab [CTRL+n]
+nmap <C-n> :tabnew<CR>
+
+""""""""""""""""""""""""""""""
+" => Terminal
+""""""""""""""""""""""""""""""
+set termwinsize=12*0
 
 """"""""""""""""""""""""""""""
 " => YAML,Shell,ZShell
