@@ -114,7 +114,7 @@ function! MyTabLine()
   return s
 endfunction
 
-function! ToggleWin(win)
+function! CloseWin(win)
   for w in range(1, winnr('$'))
       if bufname(winbufnr(w)) ==# a:win
           execute w . 'wincmd c'  
@@ -125,7 +125,7 @@ function! ToggleWin(win)
 endfunction
 
 function! ShowCustom()
-  if ToggleWin('[QuickHelp]')
+  if CloseWin('[QuickHelp]')
       return
   endif
   new
