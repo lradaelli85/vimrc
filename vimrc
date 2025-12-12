@@ -73,11 +73,15 @@ set showtabline=2
 " custom tabline
 set tabline=%!MyTabLine()
 
+""""""""""""""""""""""""""""""
+" => Functions
+""""""""""""""""""""""""""""""
+
 function! MyTabLine()
   let s = ''
   " loop over tabs
   for i in range(1, tabpagenr('$'))
-    " Highlight tabs: current vs others
+    " Highlight tabs: current vs others 
     if i == tabpagenr()
       let s .= '%#TabLineSel#'
     else
@@ -110,6 +114,34 @@ function! MyTabLine()
   return s
 endfunction
 
+function! ToggleWin(win)
+  for w in range(1, winnr('$'))
+      if bufname(winbufnr(w)) ==# a:win
+          execute w . 'wincmd c'  
+          return 1
+      endif
+  endfor
+  return 0
+endfunction
+
+function! ShowCustom()
+  if ToggleWin('[QuickHelp]')
+      return
+  endif
+  new
+  setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile
+  file [QuickHelp]
+  call setline(1, 'Quick Help')
+  call append(1,'SHIFT+t       :> Oepn a terminal at the bottom of the current window')
+  call append(1,'SHIFT+Left    :> Move to the tab on the left')
+  call append(1,'SHIFT+Right   :> Move to the tab on the right')
+  call append(1,'CTRL+n        :> Open new tab')
+  call append(1,'<F2>          :> Select all')
+  call append(1,'<F3>          :> Copy selection in system clipboard')
+  call append(1,'<F4>          :> Open file browser using Netrw')
+  call append(1,'<F12>         :> Show this Help')
+  call append(1,'====================================================================')
+endfunction
 
 """"""""""""""""""""""""""""""
 " => Status line
@@ -117,38 +149,70 @@ endfunction
 " Always show the status line
 set laststatus=2
 
+" Highlight text desert colorscheme 
+hi User1 cterm=bold term=bold,reverse ctermfg=236 ctermbg=144 
+
 " Format the status line
 " set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 " https://vimdoc.sourceforge.net/htmldoc/options.html#'statusline'
+
 set statusline=
-set statusline +=\ [%{&ff}]
+set statusline +=\ [%{&ff}] 
 set statusline +=\ %y
 set statusline +=\ [%{''.(&fenc!=''?&fenc:&enc).''}]
 set statusline +=\ %<%F "%m
-set statusline +=\ \ Line:\%l\/%L
+set statusline +=\ \ Line:\%l\/%L\ \[\%p%%]
 set statusline +=\ \ Column:\%c
-
+set statusline +=%=
+"set statusline +=\%1*<F4>\ Open\ \|   
+"set statusline +=\ \%1*<F3>\ Copy\ selection\ \|   
+"set statusline +=\ \%1*<F2>\ Select\ all\ \|   
+set statusline +=\ \%1*<F12>\ Help 
 
 """"""""""""""""""""""""""""""
 " => Mappings
 """"""""""""""""""""""""""""""
 
 " Open a terminal below current tan
-nmap <S-t> :below terminal<CR>
+noremap <silent> <S-t> :below terminal<CR>
 
 " Move on left tab
-nmap <S-Left> gT
+noremap <silent> <S-Left> gT
 
 " Move on right tab
-nmap <S-Right> gt
+noremap <silent> <S-Right> gt
 
 " Open a new file with no name in a new tab [CTRL+n]
-nmap <C-n> :tabnew<CR>
+noremap <silent> <C-n> :tabnew<CR>
+
+" Select All
+noremap <silent> <F2> ggVG
+
+" Copy selection to the system clipboard [visual mode]
+vnoremap <silent> <F3> "+y
+
+" Open Netrw on the left
+noremap <silent> <F4> :Lex<CR>
+
+" Show custom maps
+noremap <silent> <F12> :call ShowCustom()<CR>
 
 """"""""""""""""""""""""""""""
 " => Terminal
 """"""""""""""""""""""""""""""
-set termwinsize=12*0
+set termwinsize=15*0
+
+""""""""""""""""""""""""""""""
+" => Netrw
+""""""""""""""""""""""""""""""
+" Tree view
+let g:netrw_liststyle = 3
+
+" Size of Netrw window
+let g:netrw_winsize = 25
+
+" Hide banner
+let g:netrw_banner = 0
 
 """"""""""""""""""""""""""""""
 " => YAML,Shell,ZShell
